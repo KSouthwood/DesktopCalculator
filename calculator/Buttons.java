@@ -1,26 +1,24 @@
 package calculator;
 
-import javax.swing.*;
-
 public enum Buttons {
-    ZERO ("Zero", "0", Buttons.COL_TWO, Buttons.ROW_FIVE, Buttons.B_WIDTH, Buttons.B_HEIGHT, "0"),
-    ONE ("One", "1", Buttons.COL_ONE, Buttons.ROW_FOUR, Buttons.B_WIDTH, Buttons.B_HEIGHT, "1"),
-    TWO ("Two", "2", Buttons.COL_TWO, Buttons.ROW_FOUR, Buttons.B_WIDTH, Buttons.B_HEIGHT, "2"),
-    THREE ("Three", "3", Buttons.COL_THREE, Buttons.ROW_FOUR, Buttons.B_WIDTH, Buttons.B_HEIGHT, "3"),
-    FOUR ("Four", "4", Buttons.COL_ONE, Buttons.ROW_THREE, Buttons.B_WIDTH, Buttons.B_HEIGHT, "4"),
-    FIVE ("Five", "5", Buttons.COL_TWO, Buttons.ROW_THREE, Buttons.B_WIDTH, Buttons.B_HEIGHT, "5"),
-    SIX ("Six", "6", Buttons.COL_THREE, Buttons.ROW_THREE, Buttons.B_WIDTH, Buttons.B_HEIGHT, "6"),
-    SEVEN ("Seven", "7", Buttons.COL_ONE, Buttons.ROW_TWO, Buttons.B_WIDTH, Buttons.B_HEIGHT, "7"),
-    EIGHT ("Eight", "8", Buttons.COL_TWO, Buttons.ROW_TWO, Buttons.B_WIDTH, Buttons.B_HEIGHT, "8"),
-    NINE ("Nine", "9", Buttons.COL_THREE, Buttons.ROW_TWO, Buttons.B_WIDTH, Buttons.B_HEIGHT, "9"),
-    ADD ("Add", "\u002B", Buttons.COL_FOUR, Buttons.ROW_FIVE, Buttons.B_WIDTH, Buttons.B_HEIGHT, "\u002B"),
-    SUBTRACT ("Subtract", "\u2212", Buttons.COL_FOUR, Buttons.ROW_FOUR, Buttons.B_WIDTH, Buttons.B_HEIGHT, "\u002D"),
-    MULTIPLY ("Multiply", "\u00D7", Buttons.COL_FOUR, Buttons.ROW_THREE, Buttons.B_WIDTH, Buttons.B_HEIGHT, "\u00D7"),
-    DIVIDE ("Divide", "\u00F7", Buttons.COL_FOUR, Buttons.ROW_TWO, Buttons.B_WIDTH, Buttons.B_HEIGHT, "\u00F7"),
-    EQUALS ("Equals", "=", Buttons.COL_ONE, Buttons.ROW_SIX, Buttons.B_WIDTH * 3 + Buttons.B_GAP * 2, Buttons.B_HEIGHT, ""),
-    CLEAR ("Clear", "C", Buttons.COL_ONE, Buttons.ROW_ONE, Buttons.B_WIDTH * 2 + Buttons.B_GAP, Buttons.B_HEIGHT, ""),
-    DELETE ("Delete", "Del", Buttons.COL_THREE, Buttons.ROW_ONE, Buttons.B_WIDTH * 2 + Buttons.B_GAP, Buttons.B_HEIGHT, ""),
-    DOT ("Dot", ".", Buttons.COL_THREE, Buttons.ROW_FIVE, Buttons.B_WIDTH, Buttons.B_HEIGHT, ".");
+    ZERO ("Zero", "0", Buttons.COL_ONE, Buttons.ROW_FIVE, Buttons.B_WIDTH * 2 + Buttons.B_GAP, Buttons.B_HEIGHT),
+    ONE ("One", "1", Buttons.COL_ONE, Buttons.ROW_FOUR, Buttons.B_WIDTH, Buttons.B_HEIGHT),
+    TWO ("Two", "2", Buttons.COL_TWO, Buttons.ROW_FOUR, Buttons.B_WIDTH, Buttons.B_HEIGHT),
+    THREE ("Three", "3", Buttons.COL_THREE, Buttons.ROW_FOUR, Buttons.B_WIDTH, Buttons.B_HEIGHT),
+    FOUR ("Four", "4", Buttons.COL_ONE, Buttons.ROW_THREE, Buttons.B_WIDTH, Buttons.B_HEIGHT),
+    FIVE ("Five", "5", Buttons.COL_TWO, Buttons.ROW_THREE, Buttons.B_WIDTH, Buttons.B_HEIGHT),
+    SIX ("Six", "6", Buttons.COL_THREE, Buttons.ROW_THREE, Buttons.B_WIDTH, Buttons.B_HEIGHT),
+    SEVEN ("Seven", "7", Buttons.COL_ONE, Buttons.ROW_TWO, Buttons.B_WIDTH, Buttons.B_HEIGHT),
+    EIGHT ("Eight", "8", Buttons.COL_TWO, Buttons.ROW_TWO, Buttons.B_WIDTH, Buttons.B_HEIGHT),
+    NINE ("Nine", "9", Buttons.COL_THREE, Buttons.ROW_TWO, Buttons.B_WIDTH, Buttons.B_HEIGHT),
+    ADD ("Add", "\u002B", Buttons.COL_FOUR, Buttons.ROW_FIVE, Buttons.B_WIDTH, Buttons.B_HEIGHT),
+    SUBTRACT ("Subtract", "\u002D", Buttons.COL_FOUR, Buttons.ROW_FOUR, Buttons.B_WIDTH, Buttons.B_HEIGHT),
+    MULTIPLY ("Multiply", "\u00D7", Buttons.COL_FOUR, Buttons.ROW_THREE, Buttons.B_WIDTH, Buttons.B_HEIGHT),
+    DIVIDE ("Divide", "\u00F7", Buttons.COL_FOUR, Buttons.ROW_TWO, Buttons.B_WIDTH, Buttons.B_HEIGHT),
+    EQUALS ("Equals", "=", Buttons.COL_ONE, Buttons.ROW_SIX, Buttons.B_WIDTH * 4 + Buttons.B_GAP * 3, Buttons.B_HEIGHT),
+    CLEAR ("Clear", "C", Buttons.COL_ONE, Buttons.ROW_ONE, Buttons.B_WIDTH * 2 + Buttons.B_GAP, Buttons.B_HEIGHT),
+    DELETE ("Delete", "Del", Buttons.COL_THREE, Buttons.ROW_ONE, Buttons.B_WIDTH * 2 + Buttons.B_GAP, Buttons.B_HEIGHT),
+    DOT ("Dot", ".", Buttons.COL_THREE, Buttons.ROW_FIVE, Buttons.B_WIDTH, Buttons.B_HEIGHT);
 
     private static final int B_HEIGHT = 50;
     private static final int B_WIDTH  = 50;
@@ -44,24 +42,14 @@ public enum Buttons {
     private final int y;
     private final int width;
     private final int height;
-    private final String value;
 
-    Buttons(String name, String text, int x, int y, int width, int height, String value) {
+    Buttons(String name, String text, int x, int y, int width, int height) {
         this.name = name;
         this.text = text;
         this.x = x;
         this.y = y;
         this.width = width;
         this.height = height;
-        this.value = value;
-    }
-
-    JButton getButton() {
-        JButton button = new JButton();
-        button.setName(this.name);
-        button.setText(this.text);
-        button.setBounds(this.x, this.y, this.width, this.height);
-        return button;
     }
 
     public String getName() {
@@ -86,9 +74,5 @@ public enum Buttons {
 
     public int getHeight() {
         return height;
-    }
-
-    public String getValue() {
-        return value;
     }
 }

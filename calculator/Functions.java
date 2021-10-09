@@ -1,6 +1,7 @@
 package calculator;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.regex.Matcher;
@@ -11,10 +12,7 @@ public class Functions {
     private final static String OPERANDS = "(?<operand>[-+]?[0-9]*\\.?[0-9]+)";
 
     String parseEquation(final String equation) {
-        String postfix = infixToPostfix(equation);
-        BigDecimal result = calculateResult(postfix).stripTrailingZeros();
-//        System.out.printf("Received: %s%nPostfix : %s%nResult  : %s%n%n", equation, postfix, result);
-        return result.stripTrailingZeros().toPlainString();
+        return calculateResult(infixToPostfix(equation)).stripTrailingZeros().toPlainString();
     }
 
     private String infixToPostfix(final String equation) {
@@ -25,7 +23,6 @@ public class Functions {
         while (parser.find()) {
             if (null != parser.group("operand")) {
                 expression.append(parser.group("operand")).append(" ");
-//                continue;
             }
 
             String operator = parser.group("operator");
@@ -80,7 +77,7 @@ public class Functions {
             case "\u00D7":
                 return operand1.multiply(operand2);
             case "\u00F7":
-                return operand2.divide(operand1);
+                return operand2.divide(operand1, MathContext.DECIMAL32);
             default:
                 return BigDecimal.ZERO;
         }
