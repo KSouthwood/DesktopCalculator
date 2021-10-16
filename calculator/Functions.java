@@ -1,5 +1,10 @@
 package calculator;
 
+import javax.swing.*;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
+import java.awt.*;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.util.ArrayDeque;
@@ -8,11 +13,107 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Functions {
-    private final static String OPERATORS = "(?<operator>[\\u002B\\u002D\\u00D7\\u00F7])";
-    private final static String OPERANDS = "(?<operand>[-+]?[0-9]*\\.?[0-9]+)";
+    private static JLabel equation;
+    private static JLabel result;
 
-    String parseEquation(final String equation) {
-        return calculateResult(infixToPostfix(equation)).stripTrailingZeros().toPlainString();
+    private static final String OPERATORS = "(?<operator>" + OperatorConstants.OPERATORS + ")";
+    private static final String OPERANDS = "(?<operand>[-+]?[0-9]*\\.?[0-9]+)";
+    private static final String DIV_BY_ZERO = String.format("%1$s$|%2$s0%1$s|%2$s0$",
+            OperatorConstants.OPERATORS, OperatorConstants.DIVIDE);
+    private static final String DANGLING = String.format("(?<leading>^\\.|%1$s\\.\\d)|(?<trailing>\\d\\.%1$s|\\d\\.$)",
+            OperatorConstants.OPERATORS);
+
+// ******************** GUI Instantiation ********************
+
+    protected JPanel createDisplayPanel() {
+        JPanel display = new JPanel(new FlowLayout());
+        display.setBorder(new EmptyBorder(10, 10, 10, 10));
+        display.add(createResultLabel());
+        display.add(createEquationLabel());
+        return display;
+    }
+
+    private JLabel createResultLabel() {
+        result = new JLabel("0");
+        result.setName("ResultLabel");
+        result.setPreferredSize(new Dimension(230, 75));
+        result.setMinimumSize(new Dimension(100, 75));
+        result.setMaximumSize(new Dimension(500, 75));
+        result.setHorizontalAlignment(SwingConstants.RIGHT);
+        result.setBorder(new CompoundBorder(
+                new LineBorder(Color.BLACK, 2),
+                new EmptyBorder(5, 5, 5, 5)));
+        result.setBackground(Color.YELLOW);
+        result.setFont(new Font("MONOSPACED", Font.BOLD, 30));
+        result.setOpaque(true);
+        return result;
+    }
+
+    private JLabel createEquationLabel() {
+        equation = new JLabel("");
+        equation.setName("EquationLabel");
+        equation.setPreferredSize(new Dimension(230, 30));
+        equation.setHorizontalAlignment(SwingConstants.RIGHT);
+        equation.setBorder(new CompoundBorder(
+                new LineBorder(Color.BLACK, 1),
+                new EmptyBorder(5, 5, 5, 5)));
+        equation.setBackground(Color.WHITE);
+        equation.setOpaque(true);
+        return equation;
+    }
+
+    // *************** Equation JLabel manipulation ***************
+
+    protected String getEquation() {
+        String text = equation.getText();
+        if (text.isEmpty()) {
+            text = "";
+        }
+        return text;
+    }
+
+    protected void setEquation(final String text) {
+        equation.setText(fixDanglingPeriods(text));
+    }
+
+    protected void appendEquation(final String text) {
+        setEquation(getEquation().concat(text));
+    }
+
+    protected void setEquationToInvalid() {
+        equation.setForeground(Color.RED.darker());
+    }
+
+    protected void setEquationToValid() {
+        equation.setForeground(Color.BLACK);
+    }
+
+    // *************** Parsing/calculating equation ***************
+
+    protected void parseEquation() {
+        if (validateEquation()) {
+            result.setText(calculateResult(infixToPostfix(getEquation()))
+                    .stripTrailingZeros().toPlainString());
+        }
+    }
+
+    /**
+     * When equals has been pressed, validate the equation before evaluating it to ensure:
+     * 1. That the equation doesn't end in an operator
+     * 2. It doesn't contain a division by zero anywhere (won't catch a division by zero if zero is the result of an
+     *      operation however)
+     */
+    private boolean validateEquation() {
+        boolean valid = true;
+        Matcher invalid = Pattern.compile(DIV_BY_ZERO).matcher(getEquation());
+        if (invalid.find()) {
+            setEquationToInvalid();
+            valid = false;
+        } else {
+            setEquationToValid();
+        }
+
+        return valid;
     }
 
     private String infixToPostfix(final String equation) {
@@ -50,6 +151,10 @@ public class Functions {
             return 2;
         }
 
+        if (operator.equals("^")) {
+            return 3;
+        }
+
         return -1;
     }
 
@@ -83,4 +188,25 @@ public class Functions {
         }
     }
 
+    private String fixDanglingPeriods(String text) {
+        if (!(text.isEmpty())) {
+            Matcher danglingPeriod = Pattern.compile(DANGLING).matcher(text);
+
+            while (danglingPeriod.find()) {
+                if (danglingPeriod.group("leading") != null) {
+                    text = text.substring(0, danglingPeriod.start("leading"))
+                            + danglingPeriod.group("leading").replace(".", "0.")
+                            + text.substring(danglingPeriod.end("leading"));
+                }
+
+                if (danglingPeriod.group("trailing") != null) {
+                    text = text.substring(0, danglingPeriod.start("trailing"))
+                            + danglingPeriod.group("trailing").replace(".", ".0")
+                            + text.substring(danglingPeriod.end("trailing"));
+                }
+            }
+        }
+
+        return text;
+    }
 }
